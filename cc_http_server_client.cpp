@@ -1,8 +1,6 @@
 #include <boost/network/protocol/http/client.hpp>
 #include <boost/network/uri.hpp>
-
-#include "cc_http_server_client.h"
-
+#include "precompiled.h"
 #ifdef _MSC_VER 
 //automatic linking on msvc to openssl
 #pragma comment(lib,"ssleay32.lib")
@@ -16,6 +14,9 @@
 
 
 #endif
+
+#include "cc_http_server_client.h"
+
 
 using namespace cc_http_server_client;
 using namespace boost::network;
@@ -37,7 +38,9 @@ struct IGetNative
 
     template<class Class>
     Class& GetAs(){
-        return *static_cast<Class*>(Get());
+        auto r = Get();
+        auto ret = static_cast<Class*>(Get());
+        return *ret;
     }
 
 	IGetNative()
@@ -270,8 +273,8 @@ struct ImplementClient
                 auto& imp = *get_implementation<IClient>();
 
                 imp.Get = [this](use_unknown<IClientRequest> req)->use_unknown<IClientResponse>{
-                   
-                        auto res = client_.get(req.QueryInterface<IGetNative>().GetAs<ImplementClientRequest>()
+                        auto ign = req.QueryInterface<IGetNative>();
+                        auto res = client_.get(ign.GetAs<ImplementClientRequest>()
                         .request_);
                          return ImplementClientResponse::create(res).QueryInterface<IClientResponse>();
                 };
@@ -341,3 +344,18 @@ struct ImplementClientCreator
 
 
 };
+
+
+extern "C"{
+    cross_compiler_interface::portable_base* CROSS_CALL_CALLING_CONVENTION GetClientCreator(){
+        try{
+            auto p = ImplementClientCreator::create();
+            return p.get_portable_base_addref();
+        }
+        catch(std::exception&){
+            return nullptr;
+        }
+
+    }
+
+}

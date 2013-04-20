@@ -18,10 +18,21 @@
     <ClInclude Include="..\..\cc_http_server_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="precompiled.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\cc_http_server_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cc_http_server_client.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
