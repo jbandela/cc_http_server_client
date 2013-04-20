@@ -38,9 +38,7 @@ struct IGetNative
 
     template<class Class>
     Class& GetAs(){
-        auto r = Get();
-        auto ret = static_cast<Class*>(Get());
-        return *ret;
+        return *static_cast<Class*>(Get());
     }
 
 	IGetNative()
@@ -273,8 +271,7 @@ struct ImplementClient
                 auto& imp = *get_implementation<IClient>();
 
                 imp.Get = [this](use_unknown<IClientRequest> req)->use_unknown<IClientResponse>{
-                        auto ign = req.QueryInterface<IGetNative>();
-                        auto res = client_.get(ign.GetAs<ImplementClientRequest>()
+                        auto res = client_.get(req.QueryInterface<IGetNative>().GetAs<ImplementClientRequest>()
                         .request_);
                          return ImplementClientResponse::create(res).QueryInterface<IClientResponse>();
                 };
